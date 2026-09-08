@@ -375,6 +375,7 @@ class PacketForwarder(
                 rawSocket = Socket()
                 vpnService.protect(rawSocket)
                 rawSocket.tcpNoDelay = true
+                rawSocket.soTimeout = 15000
                 rawSocket.connect(InetSocketAddress(profile.host, profile.port), 7000)
 
                 val isTls = (profile.protocol == ProxyProtocol.VLESS && profile.port == 443) || profile.protocol == ProxyProtocol.SSL_SNI_TUNNEL
@@ -387,13 +388,23 @@ class PacketForwarder(
                         true
                     ) as SSLSocket
 
-                    val params = ssl.sslParameters
-                    params.serverNames = listOf(SNIHostName(sniHost))
                     try {
-                        params.applicationProtocols = arrayOf("http/1.1")
-                    } catch (_: Exception) {}
-                    ssl.sslParameters = params
-                    ssl.startHandshake()
+                        val params = ssl.sslParameters
+                        try {
+                            params.serverNames = listOf(SNIHostName(sniHost))
+                        } catch (_: Throwable) {}
+                        try {
+                            params.applicationProtocols = arrayOf("http/1.1")
+                        } catch (_: Throwable) {}
+                        ssl.sslParameters = params
+                    } catch (_: Throwable) {}
+
+                    try {
+                        ssl.startHandshake()
+                    } catch (e: Exception) {
+                        VpnStateManager.addLog("⚠️ فشلت مصافحة TLS مع ثغرة SNI ($sniHost): ${e.localizedMessage ?: e.javaClass.simpleName} - جرب تبديل البروفايل لثغرة أخرى (WhatsApp أو TikTok)")
+                        throw e
+                    }
                     ssl
                 } else {
                     rawSocket
@@ -534,7 +545,8 @@ class PacketForwarder(
                 }
             } catch (e: Exception) {
                 if (isRunning) {
-                    VpnStateManager.addLog("❌ خطأ اتصال بالنفق (${state.targetDomain.ifBlank { state.dstIp }}): ${e.localizedMessage}")
+                    val msg = e.localizedMessage ?: e.message ?: e.javaClass.simpleName
+                    VpnStateManager.addLog("❌ خطأ اتصال بالنفق (${state.targetDomain.ifBlank { state.dstIp }}): $msg")
                 }
             } finally {
                 state.close()

@@ -208,6 +208,30 @@ fun VpnMainScreen(modifier: Modifier = Modifier) {
                 transport = "ws"
             ),
             VpnProfile(
+                id = "inwi_star6_wa_cdn_443",
+                name = "⚡ إنوي *6 - ثغرة WhatsApp CDN (منفذ 443 TLS)",
+                host = "187.77.168.45",
+                port = 443,
+                protocol = ProxyProtocol.VLESS,
+                dns = "1.1.1.1",
+                sniHost = "c.whatsapp.net",
+                uuid = "5ca53c7d-a947-4191-b98d-16ff5cdbd315",
+                path = "/morocco6",
+                transport = "ws"
+            ),
+            VpnProfile(
+                id = "inwi_star6_ig_443",
+                name = "إنوي نجمة 6 - ثغرة Instagram (منفذ 443 TLS)",
+                host = "187.77.168.45",
+                port = 443,
+                protocol = ProxyProtocol.VLESS,
+                dns = "8.8.8.8",
+                sniHost = "www.instagram.com",
+                uuid = "5ca53c7d-a947-4191-b98d-16ff5cdbd315",
+                path = "/morocco6",
+                transport = "ws"
+            ),
+            VpnProfile(
                 id = "inwi_star6_fb_80",
                 name = "إنوي نجمة 6 - ثغرة Facebook (منفذ 80 بدون TLS)",
                 host = "187.77.168.45",
