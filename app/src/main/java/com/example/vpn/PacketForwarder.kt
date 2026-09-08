@@ -362,6 +362,11 @@ class PacketForwarder(
 
             // إرسال البيانات عبر النفق
             conn.sendPayload(payload)
+        } else {
+            // تحديث رقم تسلسل العميل حتى للحزم الخالية من البيانات (Pure ACKs)
+            if (clientSeq > conn.clientSeq) {
+                conn.clientSeq = clientSeq
+            }
         }
     }
 
@@ -423,9 +428,10 @@ class PacketForwarder(
                     out.flush()
                     val statusLine = readHttpResponse(inStream)
                     if (statusLine.contains("101")) {
-                        VpnStateManager.addLog("✅ نجحت مصافحة WebSocket (101 Switching Protocols) مع ${state.targetDomain.ifBlank { state.dstIp }}")
-                    } else if (statusLine.isNotBlank()) {
-                        VpnStateManager.addLog("⚠️ رد السيرفر: $statusLine (تحقق من مسار Path: ${profile.path})")
+                        VpnStateManager.addLog("✅ نجحت مصافحة WebSocket (101) مع ${state.targetDomain.ifBlank { state.dstIp }}")
+                    } else {
+                        VpnStateManager.addLog("⚠️ فشلت مصافحة WebSocket ($statusLine) مع ${state.targetDomain.ifBlank { state.dstIp }}")
+                        throw java.io.IOException("WebSocket handshake failed: $statusLine")
                     }
 
                     // 2. إعداد دالة إرسال البيانات مع ترويسة VLESS لأول إطار
@@ -455,17 +461,8 @@ class PacketForwarder(
                     }
                 }
 
-                // إرسال البيانات المعلقة
+                // إرسال البيانات المعلقة المتراكمة من المتصفح
                 state.flushPendingData()
-
-                // في حالة لم تكن هناك بيانات معلقة حتى الآن، إرسال ترويسة VLESS مع إطار أولي
-                if (!isHeaderSent && profile.protocol == ProxyProtocol.VLESS) {
-                    isHeaderSent = true
-                    val vlessHeader = buildVlessHeader(profile, state.targetDomain, state.dstIp, state.dstPort)
-                    val frame = encodeWsBinaryFrame(vlessHeader)
-                    out.write(frame)
-                    out.flush()
-                }
 
                 // 3. قراءة استجابة السيرفر وتغذية أندرويد بالبيانات (Download)
                 val dataIn = DataInputStream(inStream)
