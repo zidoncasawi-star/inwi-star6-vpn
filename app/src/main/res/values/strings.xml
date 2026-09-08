@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Remix VPN Proxy Client</string>
+    <string name="vpn_service_title">خدمة النفق VPN</string>
+    <string name="vpn_connected">النفق متصل</string>
+    <string name="vpn_disconnected">النفق مفصول</string>
+    <string name="vpn_connecting">جارٍ الاتصال بالنفق...</string>
+    <string name="vpn_disconnecting">جارٍ قطع الاتصال...</string>
+    <string name="vpn_permission_desc">يتطلب التطبيق إنشاء نفق VPN محلي آمن لتوجيه حركة البيانات وحمايتها.</string>
+</resources>

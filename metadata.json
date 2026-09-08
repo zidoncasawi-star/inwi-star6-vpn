@@ -1,0 +1,8 @@
+{
+  "name": "Remix VPN Proxy Client",
+  "description": "تطبيق نفق VPN وبروكسي مخصص مع دعم بروتوكولات SOCKS5 و SSL SNI Tunneling لتخطي الحظر وتشغيل Google على عروض إنوي نجمة 6",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
