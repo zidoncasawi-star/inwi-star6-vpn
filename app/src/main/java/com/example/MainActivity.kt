@@ -160,6 +160,30 @@ fun VpnMainScreen(modifier: Modifier = Modifier) {
     val defaultProfiles = remember {
         listOf(
             VpnProfile(
+                id = "inwi_portal_http_80",
+                name = "🇲🇦 إنوي المفتوح - ثغرة بوابة inwi.ma (منفذ 80 السريع)",
+                host = "187.77.168.45",
+                port = 80,
+                protocol = ProxyProtocol.VLESS,
+                dns = "8.8.8.8",
+                sniHost = "inwi.ma",
+                uuid = "5ca53c7d-a947-4191-b98d-16ff5cdbd315",
+                path = "/morocco6",
+                transport = "ws"
+            ),
+            VpnProfile(
+                id = "inwi_portal_tls_443",
+                name = "🇲🇦 إنوي المشفر - ثغرة بوابة inwi.ma (منفذ 443 TLS)",
+                host = "187.77.168.45",
+                port = 443,
+                protocol = ProxyProtocol.VLESS,
+                dns = "8.8.8.8",
+                sniHost = "inwi.ma",
+                uuid = "5ca53c7d-a947-4191-b98d-16ff5cdbd315",
+                path = "/morocco6",
+                transport = "ws"
+            ),
+            VpnProfile(
                 id = "inwi_star6_tls_443",
                 name = "🔒 إنوي *6 المشفر (منفذ 443 TLS - الأفضل لـ Google)",
                 host = "187.77.168.45",
